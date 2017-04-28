@@ -13,7 +13,7 @@ const articleSchema = new Schema({
     thumb: String,
     comments: [{
         type: Schema.Types.ObjectId,
-        ref: "Comments"
+        ref: "comments"
     }]
 });
 

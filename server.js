@@ -4,6 +4,9 @@ const Comments = require("./models/Comments.js");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 3000;
 mongoose.Promise = Promise;
 
@@ -11,7 +14,7 @@ app.use(express.static("./public"));
 
 require("./controllers/routes.js")(app);
 
-mongoose.connect("mongodb://localhost/OnionScraperDB", function(error){
+mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds163010.mlab.com:63010/heroku_srx5f120", function(error){
   if (error){
     console.error(error);
   }else{

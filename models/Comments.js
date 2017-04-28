@@ -4,6 +4,9 @@ const Schema = mongoose.Schema;
 const commentsSchema = new Schema({
     body: {
         type: String
+    },
+    author: {
+        type: String
     }
 });
 

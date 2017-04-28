@@ -40,3 +40,49 @@ p.text-muted {
   margin: 20px 0;
 }
 
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+  -webkit-align-content: flex-end;
+  align-content: flex-end;
+}
+
+.panel {
+
+  padding: 25px;
+}
+.btn {
+    margin-top: 10px;
+    line-height: 1.5em;
+}
+
+.btn-success {
+
+  background-color: #006b3a;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+#commentCount {
+    border-radius: 1em;
+    font-family: arial;
+    background: #ffffff;
+    font-weight: bold;
+    color: #211f1f;
+    display: inline-block;
+    text-align: center;
+    width: 2em;
+    margin-left: 6px;
+}
+
+.commentPanel {
+  margin-top: 10px;
+}
+
+form {
+  margin-top: 10px;
+}
