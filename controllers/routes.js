@@ -13,38 +13,39 @@ app.get("/", function(req, res){
 })
    
 
-app.get("/scrape",function(req, res){
-
-        
+app.get("/scrape",function(req, res){      
 
         request(URL + section, function(error, response, html){
+            if (error) throw error;
 
-            Article.remove({}, function(err, data){
+            Article.remove({}, function(err, data){ //remove all articles
 
-                Comment.remove({}).then(function(){
+                Comment.remove({}).then(function(){ //remove all comments
                  $ = cheerio.load(html); 
+                 if(!$(".post-wrapper").length){
+                     res.send("Your scraper logic is no longer valid");
+                } else{                 
+                    $(".post-wrapper").each(function (i, element){
+                        const result = {}
+                        result.title = $(this).find("header").find("a").eq(0).text();
+                        result.link = $(this).find("header").find("a").attr("href");
+                        result.thumb = $(this).find("source").attr("data-srcset");
 
-                $("article.summary").each(function (i, element){
-                    const result = {}
-                    result.title = $(this).find(".headline").children("a").attr("title");
-                    result.link = URL + $(this).find(".headline").children("a").attr("href");
-                    result.thumb = $(this).find("img").attr("src");
-                    
+                        console.log(result);
+                        
+                        let newEntry = new Article(result);
 
-                    let newEntry = new Article(result);
-
-                    newEntry.save(function(err, doc){
-                    if(err) {
-                        console.log(err);
-                    } else {
-                        console.log(doc);
-                    }
-                });
-
+                        newEntry.save(function(err, doc){
+                            if(err) {
+                                console.log(err);
+                            } else {
+                                res.send("Scrape complete");
+                            }
+                        });
+                    });
+                }
             });
-
-        });
-        res.send("Scrape complete");
+       
     });
         });
 
