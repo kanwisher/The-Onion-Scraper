@@ -11,44 +11,65 @@ module.exports = function(app){
 app.get("/", function(req, res){
     res.render(index.html);
 })
+
+app.get("/clearall", function(req, res){
+    Article.remove({}, function(err, data){ //remove all articles
+        
+        Comment.remove({},function(err, data){
+            res.send("database wiped");
+        })
+     }); //remove all comments
+});
    
 
-app.get("/scrape",function(req, res){      
-
+app.get("/scrape",function(req, res){
         request(URL + section, function(error, response, html){
             if (error) throw error;
+            $ = cheerio.load(html); 
+            if(!$(".post-wrapper").length){
+                res.send("The scraper logic is no longer valid, please update");
+            } else {
+                var newArticles = 0;                                
+                $(".post-wrapper").each(function (i, element){
+                    const result = {}
+                    result.title = $(this).find("header").find("a").eq(0).text();
+                    result.link = $(this).find("header").find("a").attr("href");
+                    result.thumb = $(this).find("source").attr("data-srcset") || `https://picsum.photos/800/606/?random`;
+                    
+                    let newEntry = new Article(result);
 
-            Article.remove({}, function(err, data){ //remove all articles
-
-                Comment.remove({}).then(function(){ //remove all comments
-                 $ = cheerio.load(html); 
-                 if(!$(".post-wrapper").length){
-                     res.send("The scraper logic is no longer valid");
-                } else{                 
-                    $(".post-wrapper").each(function (i, element){
-                        const result = {}
-                        result.title = $(this).find("header").find("a").eq(0).text();
-                        result.link = $(this).find("header").find("a").attr("href");
-                        result.thumb = $(this).find("source").attr("data-srcset");
-
-                        console.log(result);
+                    Article.findOne({title: result.title}, function (err, found){
+                        if (err) throw err;
                         
-                        let newEntry = new Article(result);
-
-                        newEntry.save(function(err, doc){
-                            if(err) {
-                                console.log(err);
+                        if(!found){
+                            newArticles++;
+                            Article.create(result, function (err){
+                                if (err) throw err;
+                                if(i === $('.post-wrapper').length - 1){ //if last (handle async)
+                                    res.send(`Scrape complete, added ${newArticles} new articles`);
+                                }
+                                
+                            });
+                        } else {
+                            if(i === $('.post-wrapper').length - 1){ //if last (handle async)
+                                res.send(`Scrape complete, added ${newArticles} new articles`);
                             }
-                        });
+                        }
                     });
-                    res.send("Scrape complete");
-                }
-            });
-       
-    });
-        });
 
-            })
+                    // Article.findOneAndUpdate(
+                    //     {title : result.title}, //find a title match
+                    //     newEntry, //if found update with this
+                    //     { upsert: true }, // if not found, add it
+                    //     function (err, doc) {
+                    //         console.log(doc);
+                    //     }
+                    // );
+                });
+                
+            }
+        });
+})
 
            
 

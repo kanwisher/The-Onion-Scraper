@@ -47,6 +47,11 @@ p.text-muted {
   flex-flow: row wrap;
   -webkit-align-content: flex-end;
   align-content: flex-end;
+
+}
+
+.equal p {
+  word-break: break-all; /* flex won't break words without spaces and it will overflow parent */
 }
 
 .panel {
