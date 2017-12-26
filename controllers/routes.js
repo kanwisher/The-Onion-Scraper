@@ -23,7 +23,7 @@ app.get("/scrape",function(req, res){
                 Comment.remove({}).then(function(){ //remove all comments
                  $ = cheerio.load(html); 
                  if(!$(".post-wrapper").length){
-                     res.send("Your scraper logic is no longer valid");
+                     res.send("The scraper logic is no longer valid");
                 } else{                 
                     $(".post-wrapper").each(function (i, element){
                         const result = {}
@@ -38,11 +38,10 @@ app.get("/scrape",function(req, res){
                         newEntry.save(function(err, doc){
                             if(err) {
                                 console.log(err);
-                            } else {
-                                res.send("Scrape complete");
                             }
                         });
                     });
+                    res.send("Scrape complete");
                 }
             });
        
@@ -95,7 +94,7 @@ app.get("/scrape",function(req, res){
         let articleId = req.params.id;
         console.log(articleId);
         Article.findOne({_id: req.params.id}).populate("comments").exec(function(err,result){
-            if(err) return handleError(err);
+            if(err) return err;
             console.log(result);
             res.send(result);
         })

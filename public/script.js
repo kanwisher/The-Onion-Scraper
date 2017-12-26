@@ -49,7 +49,7 @@ $(document).on('click', '.btn-success', function(){
 });
 
 
-$(document).on('click', '.btn-warning', function(){
+$(document).on('click', '.btn-primary', function(){
     let button = $(this);
     let commentDiv = button.siblings(".panel") 
     $.get(`/getcomments/${button.data('id')}`, function(data){
